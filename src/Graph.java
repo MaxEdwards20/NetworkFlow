@@ -128,7 +128,13 @@ public class Graph {
     }
 
     public void printResidual() {
-
+        for (int i = 0; i < residual.length; i++){
+            System.out.print(i + ": ");
+            for (int j = 0; j < residual[i].length; j++){
+                System.out.print(residual[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     public String toString() {
