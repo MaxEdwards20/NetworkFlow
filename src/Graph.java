@@ -7,13 +7,11 @@ public class Graph {
 
     public Graph(String name, int vertexCount) {
         this.name = name;
-        residual = new int[vertexCount][2];
 
         vertices = new GraphNode[vertexCount];
+        residual = new int[vertexCount][vertexCount]; // in case one vertex touches all others
         for (int vertex = 0; vertex < vertexCount; vertex++) {
             vertices[vertex] = new GraphNode(vertex);
-            residual[vertex][0] = 0;
-            residual[vertex][1] = 0;
         }
     }
 
@@ -24,8 +22,8 @@ public class Graph {
 
         // This adds the actual requested edge, along with its capacity
         vertices[source].addEdge(source, destination, capacity);
-        residual[source][0] = capacity;
-
+        residual[source][destination] = capacity;
+        residual[destination][source]= 0;
         return true;
     }
 
