@@ -32,8 +32,9 @@ public class Graph {
      */
     public int findMaxFlow(int s, int t, boolean report) {
         int totalFlow = 0;
-        StringBuilder path = new StringBuilder();
+        StringBuilder totalPath = new StringBuilder();
         while (hasAugmentingPath(s, t)){
+            StringBuilder path = new StringBuilder();
             int availableFlow = 1000000;
             GraphNode v = vertices[t];
             while (v.parent != -1){
@@ -45,6 +46,7 @@ public class Graph {
                 v = vertices[v.parent]; // Move the current up a level to its parent
             }
             path.insert(0, s + " ");
+            totalPath.append(path).append("\n");
             v = vertices[t];
             while (v.parent != -1){
                 residual[v.parent][v.id] -= availableFlow;
@@ -54,7 +56,7 @@ public class Graph {
             totalFlow += availableFlow;
         }
         if(report){
-            System.out.println(path);
+            System.out.println(totalPath);
         }
         return totalFlow;
     }

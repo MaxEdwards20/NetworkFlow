@@ -28,10 +28,10 @@ public class Assignment7Driver {
 //        System.out.printf("Total Flow: %d\n", flow5);
 //        g5.findMinCut(0);
 //
-//        Graph g6 = buildGraph("demands6.txt");
-//        int flow6 = g6.findMaxFlow(0, 7, true);
-//        System.out.printf("Total Flow: %d\n", flow6);
-//        g6.findMinCut(0);
+        Graph g6 = buildGraph("demands6.txt");
+        int flow6 = g6.findMaxFlow(0, 7, true);
+        System.out.printf("Total Flow: %d\n", flow6);
+        g6.findMinCut(0);
     }
 
     public static Graph buildGraph(String filename) {
