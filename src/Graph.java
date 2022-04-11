@@ -45,20 +45,36 @@ public class Graph {
                 if (residual[v.parent][v.id] < availableFlow){availableFlow = residual[v.parent][v.id];}
                 v = vertices[v.parent]; // Move the current up a level to its parent
             }
-            path.insert(0, s + " ");
-            totalPath.append(path).append("\n");
             v = vertices[t];
             while (v.parent != -1){
                 residual[v.parent][v.id] -= availableFlow;
                 residual[v.id][v.parent] += availableFlow;
                 v = vertices[v.parent];
             }
+            path.insert(0, "Flow " + availableFlow + ": "+ s + " ");
+            totalPath.append(path).append("\n");
             totalFlow += availableFlow;
         }
         if(report){
+            System.out.println("-- Max Flow: " + name+ " --");
             System.out.println(totalPath);
+            System.out.println(getEdgeReport());
         }
         return totalFlow;
+    }
+
+    private String getEdgeReport(){
+        StringBuilder sb = new StringBuilder();
+        for (var vertex : vertices){
+            for (var edge: vertex.successor){
+                int diff = edge.capacity - residual[edge.from][edge.to];
+                if (diff > 0){
+                    sb.append("Edge(" + edge.from + ", " + edge.to + ") transports " + diff + " items");
+                    sb.append("\n");
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**
