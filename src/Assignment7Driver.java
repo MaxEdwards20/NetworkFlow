@@ -8,30 +8,30 @@ public class Assignment7Driver {
         System.out.printf("Total Flow: %d\n", flow1);
         g1.findMinCut(0);
 
-        Graph g2 = buildGraph("demands2.txt");
-        int flow2 = g2.findMaxFlow(0, 8, true);
-        System.out.printf("Total Flow: %d\n", flow2);
-        g2.findMinCut(0);
-
-        Graph g3 = buildGraph("demands3.txt");
-        int flow3 = g3.findMaxFlow(0, 8, true);
-        System.out.printf("Total Flow: %d\n", flow3);
-        g3.findMinCut(0);
-
-        Graph g4 = buildGraph("demands4.txt");
-        int flow4 = g4.findMaxFlow(0, 7, true);
-        System.out.printf("Total Flow: %d\n", flow4);
-        g4.findMinCut(0);
-
-        Graph g5 = buildGraph("demands5.txt");
-        int flow5 = g5.findMaxFlow(0, 8, true);
-        System.out.printf("Total Flow: %d\n", flow5);
-        g5.findMinCut(0);
-
-        Graph g6 = buildGraph("demands6.txt");
-        int flow6 = g6.findMaxFlow(0, 7, true);
-        System.out.printf("Total Flow: %d\n", flow6);
-        g6.findMinCut(0);
+//        Graph g2 = buildGraph("demands2.txt");
+//        int flow2 = g2.findMaxFlow(0, 8, true);
+//        System.out.printf("Total Flow: %d\n", flow2);
+//        g2.findMinCut(0);
+//
+//        Graph g3 = buildGraph("demands3.txt");
+//        int flow3 = g3.findMaxFlow(0, 8, true);
+//        System.out.printf("Total Flow: %d\n", flow3);
+//        g3.findMinCut(0);
+//
+//        Graph g4 = buildGraph("demands4.txt");
+//        int flow4 = g4.findMaxFlow(0, 7, true);
+//        System.out.printf("Total Flow: %d\n", flow4);
+//        g4.findMinCut(0);
+//
+//        Graph g5 = buildGraph("demands5.txt");
+//        int flow5 = g5.findMaxFlow(0, 8, true);
+//        System.out.printf("Total Flow: %d\n", flow5);
+//        g5.findMinCut(0);
+//
+//        Graph g6 = buildGraph("demands6.txt");
+//        int flow6 = g6.findMaxFlow(0, 7, true);
+//        System.out.printf("Total Flow: %d\n", flow6);
+//        g6.findMinCut(0);
     }
 
     public static Graph buildGraph(String filename) {

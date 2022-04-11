@@ -31,11 +31,48 @@ public class Graph {
      * Algorithm to find max-flow in a network
      */
     public int findMaxFlow(int s, int t, boolean report) {
-        // TODO:
-        if (report){
-            System.out.println("TODO: Put flows here");
+        int totalFlow = 0;
+        StringBuilder path = new StringBuilder();
+        while (hasAugmentingPath(s, t)){
+            int availableFlow = 1000000;
+            GraphNode v = vertices[t];
+            while (v.parent != -1){
+                path.insert(0, v.id + " ");
+                int capacity = getCapacity(v.id);
+//                System.out.println("Capacity from " + v.parent + " to " + v.id + " is "+ capacity);
+                if (capacity < availableFlow){availableFlow = capacity;}
+                if (residual[v.parent][v.id] < availableFlow){availableFlow = residual[v.parent][v.id];}
+                v = vertices[v.parent]; // Move the current up a level to its parent
+            }
+            path.insert(0, s + " ");
+            v = vertices[t];
+            while (v.parent != -1){
+                residual[v.parent][v.id] -= availableFlow;
+                residual[v.id][v.parent] += availableFlow;
+                v = vertices[v.parent];
+            }
+            totalFlow += availableFlow;
         }
-        return 0;
+        if(report){
+            System.out.println(path);
+        }
+        return totalFlow;
+    }
+
+    /**
+     * Algorithm to find the capacity of an edge from a parent to a given node
+     * @param current node to
+     * @return integer value of the capacity to a node
+     */
+    private int getCapacity(int current){
+        GraphNode vertex = vertices[current];
+        GraphNode parent = vertices[vertex.parent];
+        for (GraphNode.EdgeInfo edge: parent.successor){
+            if (edge.to == current && edge.from == parent.id){
+                return edge.capacity;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -44,6 +81,7 @@ public class Graph {
     private boolean hasAugmentingPath(int s, int t) {
         Queue<Integer> queue = new LinkedList<>();
         // Reset all vertices to have no parent
+//        System.out.println("Augmenting paths values are s:" + s + " t:" + t);
         for (var vertex: vertices) {
             vertex.parent = -1;
         }
@@ -58,6 +96,8 @@ public class Graph {
                 }
             }
         }
+        // Return false if the parent is non existent
+        // Return true if the parent has changed
         return vertices[t].parent != -1;
     }
 
