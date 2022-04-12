@@ -65,6 +65,33 @@ public class Graph {
         return totalFlow;
     }
 
+    /**
+     * Algorithm to find an augmenting path in a network
+     */
+    private boolean hasAugmentingPath(int s, int t) {
+        Queue<Integer> queue = new LinkedList<>();
+        // Reset all vertices to have no parent
+//        System.out.println("Augmenting paths values are s:" + s + " t:" + t);
+        for (var vertex: vertices) {
+            vertex.parent = -1;
+        }
+        queue.add(s);
+        while (!queue.isEmpty() && vertices[t].parent == -1){
+            int v = queue.remove();
+            for (var edge: vertices[v].successor){
+                int w = edge.to;
+                if (vertices[w].parent == -1 && residual[v][w] > 0 && w != s){
+                    vertices[w].parent = v;
+                    queue.add(w);
+                }
+            }
+        }
+        // Return false if the parent is non existent
+        // Return true if the parent has changed
+        return vertices[t].parent != -1;
+    }
+
+
     private String getEdgeReport(){
         StringBuilder sb = new StringBuilder();
         for (var vertex : vertices){
@@ -93,32 +120,6 @@ public class Graph {
             }
         }
         return -1;
-    }
-
-    /**
-     * Algorithm to find an augmenting path in a network
-     */
-    private boolean hasAugmentingPath(int s, int t) {
-        Queue<Integer> queue = new LinkedList<>();
-        // Reset all vertices to have no parent
-//        System.out.println("Augmenting paths values are s:" + s + " t:" + t);
-        for (var vertex: vertices) {
-            vertex.parent = -1;
-        }
-        queue.add(s);
-        while (!queue.isEmpty() && vertices[t].parent == -1){
-            int v = queue.remove();
-            for (var edge: vertices[v].successor){
-                int w = edge.to;
-                if (vertices[w].parent == -1 && residual[v][w] > 0 && w != s){
-                    vertices[w].parent = v;
-                    queue.add(w);
-                }
-            }
-        }
-        // Return false if the parent is non existent
-        // Return true if the parent has changed
-        return vertices[t].parent != -1;
     }
 
 
