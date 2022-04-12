@@ -42,7 +42,9 @@ public class Graph {
                 int capacity = getCapacity(v.id);
 //                System.out.println("Capacity from " + v.parent + " to " + v.id + " is "+ capacity);
                 if (capacity < availableFlow){availableFlow = capacity;}
-                if (residual[v.parent][v.id] < availableFlow){availableFlow = residual[v.parent][v.id];}
+                if (residual[v.parent][v.id] < availableFlow){
+                    availableFlow = residual[v.parent][v.id];
+                }
                 v = vertices[v.parent]; // Move the current up a level to its parent
             }
             v = vertices[t];
@@ -58,7 +60,7 @@ public class Graph {
         if(report){
             System.out.println("-- Max Flow: " + name+ " --");
             System.out.println(totalPath);
-            System.out.println(getEdgeReport());
+            System.out.print(getEdgeReport());
         }
         return totalFlow;
     }
@@ -128,6 +130,7 @@ public class Graph {
     }
 
     public void printResidual() {
+        System.out.println("\n--- Residual Graph ---");
         for (int i = 0; i < residual.length; i++){
             System.out.print(i + ": ");
             for (int j = 0; j < residual[i].length; j++){
@@ -135,6 +138,7 @@ public class Graph {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public String toString() {
