@@ -14,7 +14,6 @@ public class Graph {
             vertices[vertex] = new GraphNode(vertex);
         }
     }
-
     public boolean addEdge(int source, int destination, int capacity) {
         // A little bit of validation
         if (source < 0 || source >= vertices.length) return false;
@@ -100,13 +99,67 @@ public class Graph {
         return sb.toString();
     }
 
-
-
     /**
      * Algorithm to find the min-cut edges in a network
      */
     public void findMinCut(int s) {
-        // TODO:
+        int[][] finalGraph = getTopological();
+//        printGraph(finalGraph);
+        ArrayList<Integer> R = findReachableVertices(s,finalGraph);
+        ArrayList<int[]> cutEdges = findCutEdges(R, finalGraph);
+    }
+
+    private int[][] getTopological(){
+        int[][] vertices = new int[residual.length][residual.length];
+        for (int i = 0; i < residual.length; i++){
+            for (int j = 0; j < residual[i].length; j++){
+                if (residual[i][j] > 0){vertices[i][j] = 1;}
+            }
+        }
+        return vertices;
+    }
+
+    private ArrayList<Integer> findReachableVertices(int s, int[][] finalGraph){
+        ArrayList<Integer> R = new ArrayList<>(residual.length);
+        R.add(s);
+        for (var vertex: R){
+            for (int i = 0; i < finalGraph.length; i++){
+                if (finalGraph[vertex][i] > 0 && !R.contains(vertex)){R.add(i);}
+            }
+        }
+//        System.out.printf("Points within reach of %d are " + R + "\n", s);
+        return R;
+    }
+
+    private ArrayList<int[]> findCutEdges(ArrayList<Integer> R, int[][] finalGraph){
+        ArrayList<int[]> cutEdges = new ArrayList<>(residual.length);
+        for (int vertex : R){
+            for (int i = 0; i < finalGraph.length; i++){
+                int[] pair = new int[2];
+                if (finalGraph[i][vertex] == 1){
+                    pair[0] = vertex;
+                    pair[1] = i;
+                    cutEdges.add(pair);
+                }
+            }
+        }
+        StringBuilder cutPrint = new StringBuilder();
+        for (var pair : cutEdges){
+            cutPrint.append("[" + pair[0] + "," + pair[1] + "] ");
+        }
+        System.out.println("Cut edges are: " + cutPrint);
+        return cutEdges;
+    }
+
+    public void printGraph(int[][] finalGraph){
+        System.out.println("Printing the graph");
+        for (int i = 0; i < finalGraph.length; i++){
+            System.out.print(i + ": ");
+            for (int j = 0; j < finalGraph[i].length; j++){
+                System.out.print(finalGraph[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     public void printResidual() {
