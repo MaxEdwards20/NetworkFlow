@@ -68,9 +68,6 @@ public class Graph {
      */
     private boolean hasAugmentingPath(int s, int t) {
         Queue<Integer> queue = new LinkedList<>();
-
-//        System.out.println("Augmenting paths values are s:" + s + " t:" + t);
-
         // Reset all vertices to have no parent
         for (var vertex: vertices) {vertex.parent = -1;}
         queue.add(s);
@@ -102,6 +99,8 @@ public class Graph {
         }
         return sb.toString();
     }
+
+
 
     /**
      * Algorithm to find the min-cut edges in a network
