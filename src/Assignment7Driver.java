@@ -6,7 +6,7 @@ public class Assignment7Driver {
         Graph g1 = buildGraph("demands1.txt");
         int flow1 = g1.findMaxFlow(0, 5, true);
         System.out.printf("Total Flow: %d\n", flow1);
-        g1.findMinCut(0);
+        g1.findMinCut(4);
 
 //        Graph g2 = buildGraph("demands2.txt");
 //        int flow2 = g2.findMaxFlow(0, 8, true);
@@ -28,10 +28,16 @@ public class Assignment7Driver {
 //        System.out.printf("Total Flow: %d\n", flow5);
 //        g5.findMinCut(0);
 //
-        Graph g6 = buildGraph("demands6.txt");
-        int flow6 = g6.findMaxFlow(0, 7, true);
-        System.out.printf("Total Flow: %d\n", flow6);
-        g6.findMinCut(0);
+//        Graph g6 = buildGraph("demands6.txt");
+//        int flow6 = g6.findMaxFlow(0, 7, true);
+//        System.out.printf("Total Flow: %d\n", flow6);
+//        g6.findMinCut(0);
+//
+//        Graph book = buildGraph("lectures.txt");
+//        int flow7 = book.findMaxFlow(0, 5, true);
+//        System.out.printf("Total Flow: %d\n", flow7);
+//        book.findMinCut(0);
+
     }
 
     public static Graph buildGraph(String filename) {

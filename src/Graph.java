@@ -4,12 +4,14 @@ public class Graph {
     private final GraphNode[] vertices;  // Adjacency list for graph.
     private final String name;  //The file from which the graph was created.
     private int[][] residual;
+    private int[][] forwardMovement;
 
     public Graph(String name, int vertexCount) {
         this.name = name;
 
         vertices = new GraphNode[vertexCount];
         residual = new int[vertexCount][vertexCount]; // in case one vertex touches all others
+        forwardMovement = new int[vertexCount][vertexCount];
         for (int vertex = 0; vertex < vertexCount; vertex++) {
             vertices[vertex] = new GraphNode(vertex);
         }
@@ -25,6 +27,8 @@ public class Graph {
 
         residual[source][destination] = capacity;
         residual[destination][source]= 0;
+
+        forwardMovement[source][destination] = capacity;
         return true;
     }
 
@@ -60,6 +64,19 @@ public class Graph {
             System.out.print(getEdgeReport());
         }
         return totalFlow;
+    }
+
+    /**
+     * Algorithm to find the min-cut edges in a network
+     */
+    public void findMinCut(int s) {
+        int[][] finalGraph = getTopological();
+//        printGraph(residual);
+//        printGraph(finalGraph);
+        ArrayList<Integer> R = findReachableVertices(s,finalGraph);
+//        System.out.println("The reachable vertices of " + s + " are: " + R);
+        ArrayList<int[]> cutEdges = findCutEdges(R, finalGraph);
+        printCutEdges(cutEdges);
     }
 
     /**
@@ -99,21 +116,14 @@ public class Graph {
         return sb.toString();
     }
 
-    /**
-     * Algorithm to find the min-cut edges in a network
-     */
-    public void findMinCut(int s) {
-        int[][] finalGraph = getTopological();
-//        printGraph(finalGraph);
-        ArrayList<Integer> R = findReachableVertices(s,finalGraph);
-        ArrayList<int[]> cutEdges = findCutEdges(R, finalGraph);
-    }
-
     private int[][] getTopological(){
         int[][] vertices = new int[residual.length][residual.length];
         for (int i = 0; i < residual.length; i++){
             for (int j = 0; j < residual[i].length; j++){
-                if (residual[i][j] > 0){vertices[i][j] = 1;}
+                if (residual[i][j] > 0){vertices[i][j] = forwardMovement[i][j] - residual[i][j];}
+                else {vertices[i][j] = 0;}
+                if (vertices[i][j] > 0){vertices[i][j] = 1;}
+                else if (vertices[i][j] < 0){vertices[i][j] = -1;}
             }
         }
         return vertices;
@@ -122,12 +132,17 @@ public class Graph {
     private ArrayList<Integer> findReachableVertices(int s, int[][] finalGraph){
         ArrayList<Integer> R = new ArrayList<>(residual.length);
         R.add(s);
-        for (var vertex: R){
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(s);
+         do {
+            int vertex = queue.remove();
             for (int i = 0; i < finalGraph.length; i++){
-                if (finalGraph[vertex][i] > 0 && !R.contains(vertex)){R.add(i);}
+                if (finalGraph[vertex][i] == 1 && !queue.contains(i)){
+                    queue.add(i);
+                    if(!R.contains(i)){R.add(i);}
+                }
             }
-        }
-//        System.out.printf("Points within reach of %d are " + R + "\n", s);
+         } while (!queue.isEmpty());
         return R;
     }
 
@@ -136,23 +151,28 @@ public class Graph {
         for (int vertex : R){
             for (int i = 0; i < finalGraph.length; i++){
                 int[] pair = new int[2];
-                if (finalGraph[i][vertex] == 1){
+                if (finalGraph[i][vertex] != 0 && !R.contains(i)){
                     pair[0] = vertex;
                     pair[1] = i;
                     cutEdges.add(pair);
                 }
             }
         }
-        StringBuilder cutPrint = new StringBuilder();
-        for (var pair : cutEdges){
-            cutPrint.append("[" + pair[0] + "," + pair[1] + "] ");
-        }
-        System.out.println("Cut edges are: " + cutPrint);
         return cutEdges;
     }
 
-    public void printGraph(int[][] finalGraph){
-        System.out.println("Printing the graph");
+    private void printCutEdges(ArrayList<int[]> cutEdges){
+        StringBuilder cutPrint = new StringBuilder();
+        cutPrint.append("\n-- Min Cut: " + name + " --\n");
+        for (var pair : cutEdges){
+            cutPrint.append("Min Cut Edge: (" + pair[0] + "," + pair[1] + ")\n");
+        }
+        System.out.println(cutPrint);
+    }
+
+    // Pass either the residual or another graph in to test for correct output
+    private void printGraph(int[][] finalGraph){
+        System.out.println("--- Graph ---");
         for (int i = 0; i < finalGraph.length; i++){
             System.out.print(i + ": ");
             for (int j = 0; j < finalGraph[i].length; j++){
@@ -160,18 +180,6 @@ public class Graph {
             }
             System.out.println();
         }
-    }
-
-    public void printResidual() {
-        System.out.println("\n--- Residual Graph ---");
-        for (int i = 0; i < residual.length; i++){
-            System.out.print(i + ": ");
-            for (int j = 0; j < residual[i].length; j++){
-                System.out.print(residual[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 
     public String toString() {
