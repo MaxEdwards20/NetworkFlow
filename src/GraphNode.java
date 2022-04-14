@@ -38,6 +38,7 @@ class GraphNode {
             this.from = from;
             this.to = to;
             this.capacity = capacity;
+
         }
 
         public String toString() {

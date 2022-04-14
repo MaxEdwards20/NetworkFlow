@@ -71,8 +71,6 @@ public class Graph {
      */
     public void findMinCut(int s) {
         int[][] finalGraph = getTopological();
-//        printGraph(residual);
-//        printGraph(finalGraph);
         ArrayList<Integer> R = findReachableVertices(s,finalGraph);
 //        System.out.println("The reachable vertices of " + s + " are: " + R);
         ArrayList<int[]> cutEdges = findCutEdges(R, finalGraph);
@@ -97,12 +95,13 @@ public class Graph {
                 }
             }
         }
-        // Return false if the parent is non existent
+        // Return false if the parent is non-existent
         // Return true if the parent has changed
         return vertices[t].parent != -1;
     }
 
     private String getEdgeReport(){
+        // Puts together a string to be output with data from each edge
         StringBuilder sb = new StringBuilder();
         for (var vertex : vertices){
             for (var edge: vertex.successor){
@@ -117,11 +116,21 @@ public class Graph {
     }
 
     private int[][] getTopological(){
+        // This converts the residual graph into the final usage graph by comparing it with its original and leaving
+        // unused edges alone
         int[][] vertices = new int[residual.length][residual.length];
         for (int i = 0; i < residual.length; i++){
             for (int j = 0; j < residual[i].length; j++){
-                if (residual[i][j] > 0){vertices[i][j] = forwardMovement[i][j] - residual[i][j];}
-                else {vertices[i][j] = 0;}
+//                vertices[i][j] = forwardMovement[i][j] - residual[i][j];
+
+                // If it had forward movement and is now zero, it was a used path that is now full
+                if(residual[i][j] == 0 && forwardMovement[i][j] > 0){vertices[i][j] = 0;}
+
+                // If it didn't have forward movement and is not zero it was a back path
+                else if (forwardMovement[i][j] == 0 && residual[i][j] != 0 ){vertices[i][j] = -1;}
+                else {vertices[i][j] = residual[i][j];}
+
+                // Convert all values to 1, 0, or -1
                 if (vertices[i][j] > 0){vertices[i][j] = 1;}
                 else if (vertices[i][j] < 0){vertices[i][j] = -1;}
             }
@@ -130,28 +139,30 @@ public class Graph {
     }
 
     private ArrayList<Integer> findReachableVertices(int s, int[][] finalGraph){
+        // Using the residual graph, this finds vertices that are not full and within range of the specified start 's'
         ArrayList<Integer> R = new ArrayList<>(residual.length);
         R.add(s);
         Queue<Integer> queue = new LinkedList<>();
         queue.add(s);
-         do {
+        do {
             int vertex = queue.remove();
             for (int i = 0; i < finalGraph.length; i++){
-                if (finalGraph[vertex][i] == 1 && !queue.contains(i)){
+                if (finalGraph[vertex][i] != 0 && !queue.contains(i) && !R.contains(i)){
                     queue.add(i);
                     if(!R.contains(i)){R.add(i);}
                 }
             }
-         } while (!queue.isEmpty());
+        } while (!queue.isEmpty());
         return R;
     }
 
     private ArrayList<int[]> findCutEdges(ArrayList<Integer> R, int[][] finalGraph){
+        // Using the set of vertices R, this finds the nearest vertices that are not in the set to be cut off
         ArrayList<int[]> cutEdges = new ArrayList<>(residual.length);
         for (int vertex : R){
             for (int i = 0; i < finalGraph.length; i++){
                 int[] pair = new int[2];
-                if (finalGraph[i][vertex] != 0 && !R.contains(i)){
+                if (finalGraph[i][vertex] == -1 && !R.contains(i)){
                     pair[0] = vertex;
                     pair[1] = i;
                     cutEdges.add(pair);
@@ -165,14 +176,14 @@ public class Graph {
         StringBuilder cutPrint = new StringBuilder();
         cutPrint.append("\n-- Min Cut: " + name + " --\n");
         for (var pair : cutEdges){
-            cutPrint.append("Min Cut Edge: (" + pair[0] + "," + pair[1] + ")\n");
+            cutPrint.append("Min Cut Edge: (" + pair[0] + ", " + pair[1] + ") : "+ forwardMovement[pair[0]][pair[1]] +"\n");
         }
         System.out.println(cutPrint);
     }
 
-    // Pass either the residual or another graph in to test for correct output
-    private void printGraph(int[][] finalGraph){
-        System.out.println("--- Graph ---");
+    // Pass either the residual or another graph in to see what the values are
+    private void printGraph(int[][] finalGraph, String name){
+        System.out.println("--- "+ name +" ---");
         for (int i = 0; i < finalGraph.length; i++){
             System.out.print(i + ": ");
             for (int j = 0; j < finalGraph[i].length; j++){
