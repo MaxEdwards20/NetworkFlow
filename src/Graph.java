@@ -7,9 +7,8 @@ public class Graph {
 
     public Graph(String name, int vertexCount) {
         this.name = name;
-
         vertices = new GraphNode[vertexCount];
-        residual = new int[vertexCount][vertexCount]; // in case one vertex touches all others
+        residual = new int[vertexCount][vertexCount];
         for (int vertex = 0; vertex < vertexCount; vertex++) {
             vertices[vertex] = new GraphNode(vertex);
         }
@@ -55,7 +54,7 @@ public class Graph {
             totalPath.append(path).append("\n");
         }
         if(report){
-            System.out.println("-- Max Flow: " + name+ " --");
+            System.out.println("-- Max Flow: " + name + " --");
             System.out.println(totalPath);
             System.out.print(getEdgeReport());
         }
@@ -67,7 +66,7 @@ public class Graph {
      */
     public void findMinCut(int s) {
         int[][] finalGraph = getTopological();
-        ArrayList<Integer> R = findReachableVertices(s,finalGraph);
+        ArrayList<Integer> R = findReachableVertices(s, finalGraph);
 //        System.out.println("The reachable vertices of " + s + " are: " + R);
         ArrayList<int[]> cutEdges = findCutEdges(R, finalGraph);
         printCutEdges(cutEdges);
@@ -78,8 +77,7 @@ public class Graph {
      */
     private boolean hasAugmentingPath(int s, int t) {
         Queue<Integer> queue = new LinkedList<>();
-        // Reset all vertices to have no parent
-        for (var vertex: vertices) {vertex.parent = -1;}
+        for (var vertex: vertices) {vertex.parent = -1;} // Reset all vertices to have no parent
         queue.add(s);
         while (!queue.isEmpty() && vertices[t].parent == -1){
             int v = queue.remove();
@@ -112,15 +110,12 @@ public class Graph {
     }
 
     private int[][] getTopological(){
-        // This converts the residual graph into the final usage graph by comparing it with its original and leaving
-        // unused edges alone
+        // This converts the residual graph into the final topographical array
         int[][] vertices = new int[residual.length][residual.length];
         for (int i = 0; i < residual.length; i++){
             for (int j = 0; j < residual[i].length; j++){
-//                vertices[i][j] = forwardMovement[i][j] - residual[i][j];
-
-                // If it didn't have forward movement and is not zero it was a back path
-                 if (getCapacity(i, j) == 0 && residual[i][j] != 0 ){vertices[i][j] = -1;}
+                // If it didn't have forward capacity and residual is not zero, it's a back path
+                if (residual[i][j] != 0 && getCapacity(i, j) == 0 ){vertices[i][j] = -1;}
                 else {vertices[i][j] = residual[i][j];}
 
                 // Convert all values to 1, 0, or -1
@@ -132,7 +127,7 @@ public class Graph {
     }
 
     private ArrayList<Integer> findReachableVertices(int s, int[][] finalGraph){
-        // Using the residual graph, this finds vertices that are not full and within range of the specified start 's'
+        // Using the residual graph, this finds vertices that are within range of the specified start 's'
         ArrayList<Integer> R = new ArrayList<>(residual.length);
         R.add(s);
         Queue<Integer> queue = new LinkedList<>();
@@ -166,13 +161,13 @@ public class Graph {
     }
 
     private int getCapacity(int start, int end){
-        GraphNode vertex = vertices[start];
-        for (var edge:vertex.successor){
+        // Returns the capacity from the start to end vertex
+        for (var edge: vertices[start].successor){
             if (edge.to == end){
                 return edge.capacity;
             }
         }
-        // This isn't ever actually hit because we know there is an edge going into it
+        // This valid isn't accessed with valid edges passed in
         return 0;
     }
 
@@ -199,7 +194,6 @@ public class Graph {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("The Graph " + name + " \n");
         for (var vertex : vertices) {
             sb.append((vertex.toString()));
