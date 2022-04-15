@@ -4,14 +4,12 @@ public class Graph {
     private final GraphNode[] vertices;  // Adjacency list for graph.
     private final String name;  //The file from which the graph was created.
     private int[][] residual;
-    private int[][] forwardMovement;
 
     public Graph(String name, int vertexCount) {
         this.name = name;
 
         vertices = new GraphNode[vertexCount];
         residual = new int[vertexCount][vertexCount]; // in case one vertex touches all others
-        forwardMovement = new int[vertexCount][vertexCount];
         for (int vertex = 0; vertex < vertexCount; vertex++) {
             vertices[vertex] = new GraphNode(vertex);
         }
@@ -27,8 +25,6 @@ public class Graph {
 
         residual[source][destination] = capacity;
         residual[destination][source]= 0;
-
-        forwardMovement[source][destination] = capacity;
         return true;
     }
 
@@ -123,11 +119,8 @@ public class Graph {
             for (int j = 0; j < residual[i].length; j++){
 //                vertices[i][j] = forwardMovement[i][j] - residual[i][j];
 
-                // If it had forward movement and is now zero, it was a used path that is now full
-                if(residual[i][j] == 0 && forwardMovement[i][j] > 0){vertices[i][j] = 0;}
-
                 // If it didn't have forward movement and is not zero it was a back path
-                else if (forwardMovement[i][j] == 0 && residual[i][j] != 0 ){vertices[i][j] = -1;}
+                 if (getCapacity(i, j) == 0 && residual[i][j] != 0 ){vertices[i][j] = -1;}
                 else {vertices[i][j] = residual[i][j];}
 
                 // Convert all values to 1, 0, or -1
@@ -172,11 +165,22 @@ public class Graph {
         return cutEdges;
     }
 
+    private int getCapacity(int start, int end){
+        GraphNode vertex = vertices[start];
+        for (var edge:vertex.successor){
+            if (edge.to == end){
+                return edge.capacity;
+            }
+        }
+        // This isn't ever actually hit because we know there is an edge going into it
+        return 0;
+    }
+
     private void printCutEdges(ArrayList<int[]> cutEdges){
         StringBuilder cutPrint = new StringBuilder();
         cutPrint.append("\n-- Min Cut: " + name + " --\n");
         for (var pair : cutEdges){
-            cutPrint.append("Min Cut Edge: (" + pair[0] + ", " + pair[1] + ") : "+ forwardMovement[pair[0]][pair[1]] +"\n");
+            cutPrint.append("Min Cut Edge: (" + pair[0] + ", " + pair[1] + ") : "+ getCapacity(pair[0], pair[1]) +"\n");
         }
         System.out.println(cutPrint);
     }
